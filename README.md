@@ -11,5 +11,5 @@
 ## 次回（Mac再起動後など）の作業再開方法
 1. Antigravity を開きます（同じ会話履歴から続けても、新しいチャットを開いても大丈夫です）。
 2. 新しいチャットで始める場合は、最初に一言こう伝えてください：
-   > **`/Users/hongoujun/Documents/GitHub/claude-agy-test` の `GEMINI.md` を読んで、暗記カードの作業を再開して**
+   > **`/Users/hongoujun/Documents/GitHub/flashcards` の `GEMINI.md` を読んで、暗記カードの作業を再開して**
 3. これだけで、AIがこれまでの仕様・GridCraft連携・ファイル構成をすべて思い出し、すぐに問題の追加や修正を再開できます！

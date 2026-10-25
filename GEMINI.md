@@ -24,7 +24,7 @@
 - `/usr/local/bin/gridcraft-cli` がインストール済み、`~/.gemini/config/mcp_config.json` にも登録済み。
 - **GridCraft GUI をリモート操作モードで起動するコマンド**:
   ```bash
-  nohup /Applications/GridCraft.app/Contents/MacOS/GridCraft --control 7979 /Users/hongoujun/Documents/GitHub/claude-agy-test/sample-uc-questions.xlsx >/dev/null 2>&1 &
+  nohup /Applications/GridCraft.app/Contents/MacOS/GridCraft --control 7979 /Users/hongoujun/Documents/GitHub/flashcards/sample-uc-questions.xlsx >/dev/null 2>&1 &
   ```
 - **起動中の GridCraft ウィンドウを操作するコマンド例**:
   ```bash
@@ -37,18 +37,18 @@
   gridcraft-cli send 7979 home.wrapText '{"range":"A1:C50","on":true}'
   # 保存とCSV変換
   gridcraft-cli send 7979 file.save '{}'
-  gridcraft-cli convert /Users/hongoujun/Documents/GitHub/claude-agy-test/sample-uc-questions.xlsx /Users/hongoujun/Documents/GitHub/claude-agy-test/sample-uc-questions.csv
+  gridcraft-cli convert /Users/hongoujun/Documents/GitHub/flashcards/sample-uc-questions.xlsx /Users/hongoujun/Documents/GitHub/flashcards/sample-uc-questions.csv
   ```
 - **ヘッドレス（GUIなし）で XLSX を更新・整形する場合**:
   ```bash
   gridcraft-cli run \
-    --in /Users/hongoujun/Documents/GitHub/claude-agy-test/sample-uc-questions.csv \
+    --in /Users/hongoujun/Documents/GitHub/flashcards/sample-uc-questions.csv \
     --cmd 'home.columnWidth={"cols":"A:A","width":160}' \
     --cmd 'home.columnWidth={"cols":"B:B","width":360}' \
     --cmd 'home.columnWidth={"cols":"C:C","width":500}' \
     --cmd 'home.wrapText={"range":"A1:C50","on":true}' \
     --cmd 'home.bold={"range":"A1:C1","on":true}' \
-    --out /Users/hongoujun/Documents/GitHub/claude-agy-test/sample-uc-questions.xlsx
+    --out /Users/hongoujun/Documents/GitHub/flashcards/sample-uc-questions.xlsx
   ```
 
 ## 4. 問題追加・編集を頼まれたときの標準ワークフロー
