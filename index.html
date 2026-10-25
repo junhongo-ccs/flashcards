@@ -20,7 +20,10 @@
     <div class="flex items-center gap-2 text-sm">
       <label class="btn cursor-pointer">ファイル選択<input id="file" type="file" accept=".xlsx,.xls,.csv,.tsv,.txt" class="hidden"></label>
       <button id="paste" class="btn">貼り付け</button>
-      <button id="view" class="btn">一覧</button>
+      <div class="inline-flex rounded-lg border border-slate-700 bg-slate-950 p-0.5">
+        <button id="modeQuiz" class="px-3.5 py-1.5 rounded-md font-medium transition-colors">問題</button>
+        <button id="modeList" class="px-3.5 py-1.5 rounded-md font-medium transition-colors">一覧</button>
+      </div>
     </div>
   </div>
 </header>
@@ -187,7 +190,8 @@ async function readFile(file) {
 function render() {
   $('cardView').classList.toggle('hidden', listMode);
   $('listView').classList.toggle('hidden', !listMode);
-  $('view').textContent = listMode ? 'カード表示' : '一覧';
+  $('modeQuiz').className = `px-3.5 py-1.5 rounded-md font-medium transition-colors ${!listMode ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`;
+  $('modeList').className = `px-3.5 py-1.5 rounded-md font-medium transition-colors ${listMode ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`;
   $('pos').textContent = view.length ? `${idx + 1} / ${view.length}` : '0 / 0';
 
   if (listMode) {
@@ -230,7 +234,8 @@ $('card').onclick = flip;
 $('prev').onclick = () => go(-1);
 $('next').onclick = () => go(1);
 $('cat').onchange = () => { idx = 0; flipped = false; applyFilter(); render(); };
-$('view').onclick = () => { listMode = !listMode; render(); };
+$('modeQuiz').onclick = () => { listMode = false; render(); };
+$('modeList').onclick = () => { listMode = true; render(); };
 $('listView').onclick = e => {
   const d = e.target.closest('[data-i]');
   if (d) { idx = +d.dataset.i; flipped = false; listMode = false; render(); }
