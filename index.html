@@ -47,22 +47,22 @@
     </div>
   </div>
 
-  <!-- 問題モード：横持ちは左に問題・右に解答、縦持ちは上下 -->
+  <!-- 問題モード：上に問題・下に解答（問題は内容の高さ、残りを解答に使う） -->
   <section id="cardView" class="flex-1 min-h-0 grid grid-cols-[auto_1fr_auto] gap-2">
     <button id="prev" class="btn w-11 text-2xl font-bold text-slate-300" aria-label="前のカード">&lt;</button>
-    <div id="card" class="relative overflow-hidden bg-slate-900 rounded-2xl border border-slate-800 grid grid-rows-2 landscape:grid-rows-1 landscape:grid-cols-2 cursor-pointer">
-      <div class="min-h-0 overflow-y-auto p-4 landscape:p-5 flex flex-col gap-3 landscape:border-r portrait:border-b border-slate-800">
+    <div id="card" class="relative overflow-hidden bg-slate-900 rounded-2xl border border-slate-800 flex flex-col cursor-pointer">
+      <div class="shrink-0 max-h-[65%] overflow-y-auto px-5 pt-4 pb-4 flex flex-col gap-2 border-b border-slate-800">
         <div class="flex items-center justify-between gap-2 text-xs">
           <span id="cardCat" class="bg-slate-800 border border-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-medium truncate"></span>
           <span id="cardPos" class="font-mono text-indigo-400 tracking-wider shrink-0"></span>
         </div>
         <div id="cardQ" class="text-lg landscape:text-xl font-bold leading-relaxed"></div>
       </div>
-      <div class="min-h-0 overflow-y-auto p-4 landscape:p-5 flex flex-col gap-3">
+      <div class="flex-1 min-h-0 overflow-y-auto px-5 pt-3 pb-4 flex flex-col gap-2">
         <div class="text-xs font-mono text-emerald-400 tracking-wider">ANSWER</div>
         <div id="cardA" class="text-lg landscape:text-xl font-medium leading-relaxed"></div>
-        <div id="cardHint" class="flex-1 flex flex-col items-center justify-center gap-2 text-slate-500 text-base">
-          <svg class="w-[36px] h-[36px]" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M600.5-379.5Q650-429 650-500t-49.5-120.5Q551-670 480-670t-120.5 49.5Q310-571 310-500t49.5 120.5Q409-330 480-330t120.5-49.5Zm-200-41Q368-453 368-500t32.5-79.5Q433-612 480-612t79.5 32.5Q592-547 592-500t-32.5 79.5Q527-388 480-388t-79.5-32.5ZM216-283Q98-366 40-500q58-134 176-217t264-83q146 0 264 83t176 217q-58 134-176 217t-264 83q-146 0-264-83Zm264-217Zm222.5 174.5Q804-391 857-500q-53-109-154.5-174.5T480-740q-121 0-222.5 65.5T102-500q54 109 155.5 174.5T480-260q121 0 222.5-65.5Z"/></svg>
+        <div id="cardHint" class="flex-1 flex items-center justify-center gap-2 text-slate-500 text-base">
+          <svg class="w-[28px] h-[28px]" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M600.5-379.5Q650-429 650-500t-49.5-120.5Q551-670 480-670t-120.5 49.5Q310-571 310-500t49.5 120.5Q409-330 480-330t120.5-49.5Zm-200-41Q368-453 368-500t32.5-79.5Q433-612 480-612t79.5 32.5Q592-547 592-500t-32.5 79.5Q527-388 480-388t-79.5-32.5ZM216-283Q98-366 40-500q58-134 176-217t264-83q146 0 264 83t176 217q-58 134-176 217t-264 83q-146 0-264-83Zm264-217Zm222.5 174.5Q804-391 857-500q-53-109-154.5-174.5T480-740q-121 0-222.5 65.5T102-500q54 109 155.5 174.5T480-260q121 0 222.5-65.5Z"/></svg>
           タップで解答を表示
         </div>
       </div>
