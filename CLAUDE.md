@@ -8,7 +8,7 @@ Windows 環境で Claude Code が作業を引き継ぐためのメモ。Mac 側�
 - ユーザーは Mac と Windows の両方で作業する。弱点データ（`my-weakness.xlsx`）は Mac から持ってきてこのフォルダ直下に置く。
 
 ## 2. リポジトリ内の主要ファイル
-- `index.html`:
+- `anki.html`:
   - サーバー不要・ブラウザで開くだけで動く暗記カードWebアプリ（Tailwind CSS CDN + SheetJS `xlsx.full.min.js` 使用）。
   - **常時ダークモード固定**、本文フォントサイズは **16px以上（`text-base` 〜 `text-2xl`）** のシンプルUI。
   - ヘッダー：タイトル（左に Material Symbols の `lightbulb` アイコン）、`再読込`（File System Access API + IndexedDB）、`QAファイル選択`。
@@ -20,7 +20,7 @@ Windows 環境で Claude Code が作業を引き継ぐためのメモ。Mac 側�
   - 列構成は **`カテゴリ, 問題, 解答`** の3列（A列: 160px, B列: 360px, C列: 500px、全セル折り返し表示、1行目太字）。
   - Mac 側でも編集されるため、編集前に最新版がこのフォルダにあるかユーザーに確認すること。
 - **配布用サンプル Excel（`sample-*.xlsx` など）は作らない。** `my-weakness.xlsx` がその役割を兼ねる。
-- `index.html` の内蔵サンプルデータ（ファイル未読込時の初期表示用）の中身は、勝手に決めずユーザーと相談すること。
+- `anki.html` の内蔵サンプルデータ（ファイル未読込時の初期表示用）の中身は、勝手に決めずユーザーと相談すること。
 - `GEMINI.md`: Mac 側 AI 用の引き継ぎメモ。共通ルールを変えたときは両方を更新すること。
 
 ## 3. GridCraft（MCP）での Excel 編集手順

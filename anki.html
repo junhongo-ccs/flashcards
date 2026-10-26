@@ -7,8 +7,16 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+<!-- JavaScript が動かない環境（Teams のプレビューなど）では、崩れたアプリの代わりに案内だけを表示 -->
+<noscript><style>body > :not(noscript) { display: none !important; } body { margin: 0; background: #020617; }</style></noscript>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen antialiased">
+<noscript>
+  <div style="font-family: system-ui, sans-serif; padding: 32px; color: #f1f5f9; background: #020617; min-height: 100vh; box-sizing: border-box;">
+    <h1 style="font-size: 28px; margin: 0 0 16px;">💡 Excel de 暗記カード</h1>
+    <p style="font-size: 16px; line-height: 1.7; margin: 0; color: #cbd5e1;">このプレビューではアプリを表示できません。<br>ファイルをダウンロードして、Edge または Chrome で開いてください。</p>
+  </div>
+</noscript>
 <div id="drop" class="hidden fixed inset-0 z-50 bg-indigo-600/80 text-white text-2xl font-bold flex items-center justify-center">.xlsx / .csv ファイルをここにドロップ</div>
 
 <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-10">
@@ -215,8 +223,13 @@ function loadText(text) {
   render();
 }
 
+// 問題データとして読めるのは Excel / CSV / TSV / テキストだけ（HTML などを誤って読まないように）
+const isDataFile = name => /\.(xlsx|xls|csv|tsv|txt)$/i.test(name || '');
+const warnNotData = name => alert(`「${name}」は問題データではありません。Excel（.xlsx）または CSV ファイルを選んでください。`);
+
 async function readFile(file) {
   if (!file) return;
+  if (!isDataFile(file.name)) return warnNotData(file.name);
   const buf = await file.arrayBuffer();
   if (/\.xlsx?$/i.test(file.name) && typeof XLSX !== 'undefined') {
     const wb = XLSX.read(buf, { type: 'array' });
@@ -355,8 +368,10 @@ $('pickBtn').onclick = async () => {
   if (window.showOpenFilePicker) {
     try {
       const [h] = await window.showOpenFilePicker({
-        types: [{ description: 'Excel / CSV', accept: { 'application/octet-stream': ['.xlsx', '.xls', '.csv', '.tsv', '.txt'] } }]
+        types: [{ description: 'Excel / CSV', accept: { 'application/octet-stream': ['.xlsx', '.xls', '.csv', '.tsv', '.txt'] } }],
+        excludeAcceptAllOption: true
       });
+      if (!isDataFile(h.name)) return warnNotData(h.name);
       fileHandle = h;
       await saveHandle(h);
       updateReloadBtn();
@@ -380,6 +395,7 @@ addEventListener('drop', async e => {
     try {
       const h = await item.getAsFileSystemHandle();
       if (h && h.kind === 'file') {
+        if (!isDataFile(h.name)) return warnNotData(h.name);
         fileHandle = h;
         await saveHandle(h);
         updateReloadBtn();
@@ -401,7 +417,7 @@ addEventListener('keydown', e => {
 buildCats();
 applyFilter();
 render();
-loadHandle().then(h => { if (h) { fileHandle = h; updateReloadBtn(); reloadFromHandle(false); } });
+loadHandle().then(h => { if (h && isDataFile(h.name)) { fileHandle = h; updateReloadBtn(); reloadFromHandle(false); } });
 </script>
 </body>
 </html>

@@ -7,7 +7,7 @@
 - ユーザーは色彩検定UC級（色のユニバーサルデザイン級）の受験対策をしており、自分の弱点問題だけをまとめた暗記カードWebアプリと問題データ（Excel / CSV）を育てている。
 
 ## 2. リポジトリ内の主要ファイル
-- `index.html`:
+- `anki.html`:
   - サーバー不要・ブラウザで開くだけで動く暗記カードWebアプリ（Tailwind CSS CDN + SheetJS `xlsx.full.min.js` 使用）。
   - **常時ダークモード固定**、本文フォントサイズは **16px以上（`text-base` 〜 `text-2xl`）** のシンプルUI。
   - ヘッダー：タイトル（左に Material Symbols の `lightbulb` アイコン）、`再読込`（File System Access API + IndexedDB）、`QAファイル選択`。
@@ -18,7 +18,7 @@
   - ユーザーの弱点データ。**GitHub で管理する（コミット対象）**。リポジトリは本人と同僚しか見ないため問題ない。同僚はこのファイルをそのまま使うか、別名で新規保存してカスタマイズして使う。
   - 列構成は **`カテゴリ, 問題, 解答`** の3列（A列: 160px, B列: 360px, C列: 500px、全セル折り返し表示 `home.wrapText: true`、1行目太字）。
 - **配布用サンプル Excel（`sample-*.xlsx` など）は作らない。** `my-weakness.xlsx` がその役割を兼ねる。
-- `index.html` の内蔵サンプルデータ（ファイル未読込時の初期表示用）の中身は、勝手に決めずユーザーと相談すること。
+- `anki.html` の内蔵サンプルデータ（ファイル未読込時の初期表示用）の中身は、勝手に決めずユーザーと相談すること。
 
 ## 3. GridCraft との連携手順（MCP / CLI）
 - `/usr/local/bin/gridcraft-cli` がインストール済み、`~/.gemini/config/mcp_config.json` にも登録済み。
