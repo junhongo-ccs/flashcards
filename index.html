@@ -3,57 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>暗記カード</title>
+<title>Excel de 暗記カード</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen antialiased">
 <div id="drop" class="hidden fixed inset-0 z-50 bg-indigo-600/80 text-white text-2xl font-bold flex items-center justify-center">.xlsx / .csv ファイルをここにドロップ</div>
 
 <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-10">
   <div class="max-w-4xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-    <div class="flex items-center gap-3">
-      <h1 class="text-lg font-bold tracking-tight">暗記カード</h1>
-      <select id="cat" class="border border-slate-700 bg-slate-800 text-slate-100 rounded-lg px-3 py-1.5 text-sm"></select>
-      <span id="pos" class="text-sm text-slate-400 font-mono"></span>
-    </div>
-    <div class="flex items-center gap-2 text-sm">
-      <button id="reloadBtn" class="btn hidden" title="選択中のファイルを再読込">🔄 再読込</button>
-      <button id="pickBtn" class="btn">ファイル選択</button>
+    <h1 class="text-lg font-bold tracking-tight flex items-center gap-2"><span class="material-symbols-outlined text-indigo-400 text-[26px] leading-none" aria-hidden="true">lightbulb</span>Excel de 暗記カード</h1>
+    <div class="flex flex-wrap items-center justify-end gap-2 text-sm ml-auto">
+      <button id="reloadBtn" class="btn hidden" title="選択中のファイルを再読込"><span class="material-symbols-outlined text-[20px] leading-none align-middle mr-1 -mt-0.5">refresh</span>再読込</button>
+      <button id="pickBtn" class="btn">QAファイル選択</button>
       <input id="file" type="file" accept=".xlsx,.xls,.csv,.tsv,.txt" class="hidden">
-      <button id="paste" class="btn">貼り付け</button>
-      <div class="inline-flex rounded-lg border border-slate-700 bg-slate-950 p-0.5">
-        <button id="modeQuiz" class="px-3.5 py-1.5 rounded-md font-medium transition-colors">問題</button>
-        <button id="modeList" class="px-3.5 py-1.5 rounded-md font-medium transition-colors">一覧</button>
-      </div>
     </div>
   </div>
 </header>
 
-<main class="max-w-4xl mx-auto px-4 py-8">
-  <section id="cardView" class="grid gap-6">
-    <div id="card" class="bg-slate-900 rounded-2xl border border-slate-800 p-8 md:p-12 min-h-[20rem] cursor-pointer select-none grid gap-6 content-start shadow-xl transition-colors hover:border-slate-700"></div>
-    <div class="grid grid-cols-2 gap-4">
-      <button id="prev" class="btn py-3.5 text-base">← 前へ</button>
-      <button id="next" class="btn py-3.5 text-base">次へ →</button>
+<div class="max-w-4xl mx-auto px-4 pt-6 flex flex-wrap items-center justify-between gap-3">
+  <div class="flex items-center gap-3">
+    <select id="cat" class="border border-slate-700 bg-slate-800 text-slate-100 rounded-lg px-3 py-1.5 text-sm"></select>
+  </div>
+  <div class="flex flex-wrap items-center justify-end gap-3 ml-auto text-sm">
+    <div class="flex items-center gap-2">
+      <span class="text-slate-400">QA順</span>
+      <div class="inline-flex rounded-lg border border-slate-700 bg-slate-950 p-0.5">
+        <button id="orderAsIs" class="px-3.5 py-1.5 rounded-md font-medium transition-colors" title="Excel に書いた順で出題">設定のまま</button>
+        <button id="orderShuffle" class="px-3.5 py-1.5 rounded-md font-medium transition-colors" title="カテゴリをまたがず、カテゴリ内で問題をシャッフル（押すたびにシャッフルし直し）"><span class="material-symbols-outlined text-[18px] leading-none align-middle mr-1 -mt-0.5">shuffle</span>シャッフル</button>
+      </div>
     </div>
-    <p class="text-center text-slate-500 text-sm">スペース / クリック：解答を表示　｜　← / → キー：前後のカードへ移動</p>
+    <div class="inline-flex rounded-lg border border-slate-700 bg-slate-950 p-0.5">
+      <button id="modeQuiz" class="px-3.5 py-1.5 rounded-md font-medium transition-colors">問題</button>
+      <button id="modeList" class="px-3.5 py-1.5 rounded-md font-medium transition-colors">QA一覧</button>
+    </div>
+  </div>
+</div>
+
+<main class="max-w-4xl mx-auto px-4 pt-6 pb-8">
+  <section id="cardView" class="grid gap-6">
+    <div class="grid grid-cols-[auto_1fr_auto] items-stretch gap-3">
+      <button id="prev" class="btn !px-0 w-12 md:w-14 text-3xl font-bold text-slate-300" aria-label="前のカード" title="前のカード（← キー）">&lt;</button>
+      <div id="card" class="relative overflow-hidden bg-slate-900 rounded-2xl border border-slate-800 p-8 md:p-12 min-h-[20rem] cursor-pointer select-none grid gap-6 content-start shadow-xl transition-colors hover:border-slate-700"></div>
+      <button id="next" class="btn !px-0 w-12 md:w-14 text-3xl font-bold text-slate-300" aria-label="次のカード" title="次のカード（→ キー）">&gt;</button>
+    </div>
+    <p class="text-center text-slate-500 text-sm">スペース / クリック：解答を表示　｜　&lt; &gt; ボタン / ← → キー：前後のカードへ移動</p>
   </section>
 
   <section id="listView" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4"></section>
 </main>
-
-<dialog id="dlg" class="rounded-xl p-0 w-full max-w-2xl bg-slate-900 text-slate-100 border border-slate-700 backdrop:bg-black/70">
-  <div class="p-5 grid gap-3">
-    <h2 class="font-bold text-lg">CSV / スプレッドシートを貼り付け</h2>
-    <p class="text-sm text-slate-400">1行1問で「カテゴリ, 問題, 解答」（または「問題, 解答」）の順に入力してください。</p>
-    <textarea id="ta" rows="12" class="border border-slate-700 bg-slate-800 text-slate-100 rounded p-3 font-mono text-sm w-full" placeholder="カテゴリ,問題,解答"></textarea>
-    <div class="flex justify-end gap-2">
-      <button id="dc" class="btn">キャンセル</button>
-      <button id="dok" class="btn !bg-indigo-600 !border-indigo-500 !text-white hover:!bg-indigo-500">読み込む</button>
-    </div>
-  </div>
-</dialog>
 
 <style type="text/tailwindcss">
   @layer components {
@@ -63,9 +62,18 @@
 
 <script type="text/plain" id="sample">
 カテゴリ,問題,解答
-"色覚の多様性","日本人男性で、P型とD型の色覚を持つ人の割合はおおよそどのくらい？","約5%（約20人に1人）"
-"色覚の多様性","日本人女性で、P型とD型の色覚を持つ人の割合はおおよそどのくらい？","約0.2%（約500人に1人）"
-"加齢と見え方","加齢により水晶体が白濁して光が散乱し、「かすんで見える」「まぶしく感じる（グレア）」「コントラストが低下する」といった変化が起きる症状を何という？","白内障"
+"色覚の多様性","日本人男性で、P型とD型の色覚を持つ人の割合はおおよそどのくらい？（％と「約何人に1人」の両方で答える）","約5%（約20人に1人）"
+"色覚の多様性","日本人女性で、P型とD型の色覚を持つ人の割合はおおよそどのくらい？（％と「約何人に1人」の両方で答える）","約0.2%（約500人に1人）"
+"加齢と見え方","加齢とともに発症率が高まり、60歳代で60〜70％、70歳代で90％、80歳代で100％近くに及ぶといわれる眼の疾患は何？","白内障"
+"加齢と見え方","水晶体の混濁が進むと霧がかかったように見えたり（霧視）、物が二重・三重に見えたりする。部分的な混濁で眼球内に光が散乱し、明所でまぶしさ（グレア）を感じるほか、表示が読みにくくなったり色の識別が困難になったりする。この症状を何という？","白内障"
+"加齢と見え方","眼からの信号を脳に伝える視神経に障害が起こる眼疾患で、日本人の40歳以上の5％が発症するといわれるものは何？","緑内障"
+"加齢と見え方","視野欠損（部分的に視野が欠けること。視野の中心から30度以内に出現することが多い）を起こし、視野狭窄（全体的に視野が狭くなること）や視力低下などの自覚症状が現れる眼疾患は何？","緑内障"
+"加齢と見え方","加齢によって網膜の中心にある黄斑に障害が生じ、視野の中心が見えにくくなる病気で、50歳を過ぎると増え始め、欧米では成人の失明原因の第1位であるものは何？","加齢黄斑変性"
+"加齢と見え方","中心暗点（視野の中心部が見えにくくなる）や変視症（物が曲がったりゆがんだりして見える）という症状が現れる眼疾患は何？","加齢黄斑変性"
+"加齢と見え方","加齢者が読書などの視作業を行うときに必要な明るさは、若年者の約何倍？","2～3倍"
+"加齢と見え方","加齢者のために室内を照らす全体照明は、若年者の何倍程度の明るさが必要？","1.5倍程度"
+"加齢と見え方","加齢による色の弁別機能の低下で、特に見分けにくくなるのは何色系と何色系？","赤紫系と青緑系"
+"加齢と見え方","老眼は「　」歳以上になると、より顕著になる。「　」に入る数字は？","60"
 "PCCSカラートーンサークル","「さえた、鮮やかな、派手な、目立つ、生き生きした」イメージのトーンは？","v (vivid)"
 "PCCSカラートーンサークル","「強い、くどい、動的な、情熱的な」イメージのトーンは？","s (strong)"
 "PCCSカラートーンサークル","「明るい、健康的な、陽気な、華やかな」イメージのトーンは？","b (bright)"
@@ -75,9 +83,30 @@
 "PCCSカラートーンサークル","「暗い、大人っぽい、円熟した、丈夫な」イメージのトーンは？","dk (dark)"
 "PCCSカラートーンサークル","「暗い灰みの、陰気な、重い、堅い、男性的」イメージのトーンは？","dkg (dark-grayish)"
 "PCCSカラートーンサークル","「柔らかな、穏やかな、ぼんやりした」イメージのトーンは？","sf (soft)"
-"PCCSカラートーンサークル","「鈍い、くすんだ、中間色の」イメージのトーンは？","d (dull / dall)"
+"PCCSカラートーンサークル","「鈍い、くすんだ、中間色の」イメージのトーンは？","d (dull)"
 "PCCSカラートーンサークル","「明るい灰みの、落ち着いた、渋い、おとなしい」イメージのトーンは？","ltg (light-grayish)"
 "PCCSカラートーンサークル","「灰みの、濁った、地味な」イメージのトーンは？","g (grayish)"
+"色が見えるしくみ","可視光線のうち、短波長（380〜500nm）の光は何色から何色に見える？","青紫～青"
+"色が見えるしくみ","可視光線のうち、中波長（500〜600nm）の光は何色から何色に見える？","緑～黄"
+"色が見えるしくみ","可視光線のうち、長波長（600〜780nm）の光は何色から何色に見える？","橙～赤"
+"色が見えるしくみ","赤－緑、黄－青、白－黒という3組の反対色を想定し、色覚を説明する反対色説を提唱した人物は誰か。","ヘリング"
+"色が見えるしくみ","物体に光が当たったとき、波長ごとにどの程度の光を反射するかを表した曲線を何という？","分光反射率曲線"
+"色が見えるしくみ","電球や太陽、ディスプレイなどのように、光源そのものから発せられる光によって知覚される色を何という？","光源色"
+"色が見えるしくみ","物体に光が当たり、その光が反射または透過することによって知覚される色を何という？","物体色"
+"色が見えるしくみ","物体に当たった光のうち、物体の表面で反射した光によって知覚される色を何という？","表面色"
+"色が見えるしくみ","色ガラスやカラーフィルターなど、物体を透過した光によって知覚される色を何という？","透過色"
+"色が見えるしくみ","私たちが色を見るために必要な三つの要素は何か。","光源・物体・視覚"
+"色の表わし方","言語において、色を表す基本的な言葉。「赤・黄・緑・青・紫・桃・橙・茶・白・灰・黒」などが該当する。これを何という？","基本色彩語"
+"色の表わし方","系統色名を構成する基本となる色名。「赤」「黄」「緑」「青」「紫」などが該当する。これを何という？","基本色名"
+"色の表わし方","基本色名に「明るい」「暗い」「灰みの」「○○みの」などの修飾語をつけ、色を系統的に表現した色名。「明るい赤」「灰みの青」などが該当する。これを何という？","系統色名"
+"色の表わし方","動植物、鉱物、自然現象、顔料、染料など、特定の事物を連想させる名前を用いて付けられた色名。「桜色」「空色」「群青」などが該当する。これを何という？","固有色名"
+"色の表わし方","固有色名のうち、比較的よく知られ、広く使われている色名。「桜色」などが該当する。これを何という？","慣用色名"
+"色の表わし方","基本的な色のことばは？","基本色彩語"
+"色の表わし方","系統色名の材料は？","基本色名"
+"色の表わし方","基本色名＋修飾語は？","系統色名"
+"色の表わし方","ものに由来する個別の色名は？","固有色名"
+"色の表わし方","固有色名のうち広く定着したものは？","慣用色名"
+"色のユニバーサルデザイン","デンマークで、障害のある人も障害のない人と同じように生活できる社会を目指す理念を提唱した人物と、その理念の名称をそれぞれ答えよ。","バンク・ミケルセン ／ ノーマライゼーション"
 </script>
 
 <script>
@@ -140,7 +169,7 @@ function parseCSV(text) {
   return out;
 }
 
-let allCards = [], view = [], idx = 0, flipped = false, listMode = false;
+let allCards = [], view = [], idx = 0, flipped = false, listMode = false, shuffled = false, listCards = [];
 try {
   const saved = JSON.parse(localStorage.getItem(KEY));
   if (Array.isArray(saved) && saved.length) allCards = saved;
@@ -157,7 +186,21 @@ function buildCats() {
 function applyFilter() {
   const c = $('cat').value;
   view = allCards.filter(x => !c || x.cat === c);
+  if (shuffled) view = shuffleInCats(view);
   idx = Math.min(idx, Math.max(view.length - 1, 0));
+}
+
+// カテゴリの並びはそのまま、各カテゴリ内の問題だけをシャッフル
+function shuffleInCats(list) {
+  const groups = new Map();
+  list.forEach(x => { if (!groups.has(x.cat)) groups.set(x.cat, []); groups.get(x.cat).push(x); });
+  return [...groups.values()].flatMap(g => {
+    for (let i = g.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [g[i], g[j]] = [g[j], g[i]];
+    }
+    return g;
+  });
 }
 
 function loadText(text) {
@@ -192,12 +235,17 @@ async function readFile(file) {
 function render() {
   $('cardView').classList.toggle('hidden', listMode);
   $('listView').classList.toggle('hidden', !listMode);
-  $('modeQuiz').className = `px-3.5 py-1.5 rounded-md font-medium transition-colors ${!listMode ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`;
-  $('modeList').className = `px-3.5 py-1.5 rounded-md font-medium transition-colors ${listMode ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`;
-  $('pos').textContent = view.length ? `${idx + 1} / ${view.length}` : '0 / 0';
+  const seg = on => `px-3.5 py-1.5 rounded-md font-medium transition-colors ${on ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`;
+  $('modeQuiz').className = seg(!listMode);
+  $('modeList').className = seg(listMode);
+  $('orderAsIs').className = seg(!shuffled);
+  $('orderShuffle').className = seg(shuffled);
 
   if (listMode) {
-    $('listView').innerHTML = view.map((c, i) => `
+    // QA一覧は資料として見るため、シャッフルに関係なく元の順で表示
+    const c0 = $('cat').value;
+    listCards = allCards.filter(x => !c0 || x.cat === c0);
+    $('listView').innerHTML = listCards.map((c, i) => `
       <div data-i="${i}" class="cursor-pointer bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl p-5 grid gap-3 content-start transition-colors">
         <div class="flex items-center justify-between text-xs text-slate-400">
           <span class="bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-md">${esc(c.cat)}</span>
@@ -216,9 +264,12 @@ function render() {
   }
 
   $('card').innerHTML = `
+    <div class="absolute inset-x-0 bottom-0 h-1 bg-slate-800" aria-hidden="true">
+      <div class="h-full bg-blue-500 transition-all duration-300" style="width:${(idx + 1) / view.length * 100}%"></div>
+    </div>
     <div class="flex items-center justify-between">
       <span class="text-xs bg-slate-800 border border-slate-700 text-slate-300 px-3 py-1 rounded-md font-medium">${esc(c.cat)}</span>
-      <span class="text-xs font-mono text-indigo-400 tracking-wider">QUESTION ${idx + 1}</span>
+      <span class="font-mono text-indigo-400 tracking-wider" aria-label="${view.length}問中 ${idx + 1}問目"><span class="text-sm">QUESTION ${idx + 1}</span><span class="text-xs text-slate-500"> / ${view.length}</span></span>
     </div>
     <div class="text-xl md:text-2xl font-bold leading-relaxed text-slate-100">${esc(c.q)}</div>
     ${flipped ? `
@@ -236,19 +287,19 @@ $('card').onclick = flip;
 $('prev').onclick = () => go(-1);
 $('next').onclick = () => go(1);
 $('cat').onchange = () => { idx = 0; flipped = false; applyFilter(); render(); };
+const setOrder = s => { shuffled = s; idx = 0; flipped = false; applyFilter(); render(); };
+$('orderAsIs').onclick = () => setOrder(false);
+$('orderShuffle').onclick = () => setOrder(true);
 $('modeQuiz').onclick = () => { listMode = false; render(); };
 $('modeList').onclick = () => { listMode = true; render(); };
 $('listView').onclick = e => {
   const d = e.target.closest('[data-i]');
-  if (d) { idx = +d.dataset.i; flipped = false; listMode = false; render(); }
+  if (d) { idx = Math.max(view.indexOf(listCards[+d.dataset.i]), 0); flipped = false; listMode = false; render(); }
 };
 
 $('file').onchange = e => { readFile(e.target.files[0]); e.target.value = ''; };
-$('paste').onclick = () => $('dlg').showModal();
-$('dc').onclick = () => $('dlg').close();
-$('dok').onclick = () => { loadText($('ta').value); $('dlg').close(); $('ta').value = ''; };
 
-// File System Access API + IndexedDB で1回選んだファイルを記憶し「🔄 再読込」で即反映
+// File System Access API + IndexedDB で1回選んだファイルを記憶し「再読込」で即反映
 let fileHandle = null;
 const dbReq = () => new Promise((res, rej) => {
   const r = indexedDB.open('uc-flashcards-db', 1);
@@ -273,7 +324,7 @@ const loadHandle = async () => {
 function updateReloadBtn() {
   if (fileHandle) {
     $('reloadBtn').classList.remove('hidden');
-    $('reloadBtn').textContent = `🔄 再読込 (${fileHandle.name})`;
+    $('reloadBtn').innerHTML = `<span class="material-symbols-outlined text-[20px] leading-none align-middle mr-1 -mt-0.5">refresh</span>再読込 (${esc(fileHandle.name)})`;
   }
 }
 
@@ -287,7 +338,7 @@ async function reloadFromHandle(askPerm) {
       await readFile(f);
     }
   } catch (e) {
-    if (askPerm) alert('ファイルの再読込に失敗しました。もう一度「ファイル選択」から選び直してください。');
+    if (askPerm) alert('ファイルの再読込に失敗しました。もう一度「QAファイル選択」から選び直してください。');
   }
 }
 
@@ -332,7 +383,7 @@ addEventListener('drop', async e => {
 });
 
 addEventListener('keydown', e => {
-  if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || $('dlg').open || listMode) return;
+  if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || listMode) return;
   if (e.code === 'Space') { e.preventDefault(); flip(); }
   else if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
   else if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
