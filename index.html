@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ja" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UC級 暗記カード</title>
+<meta name="theme-color" content="#020617">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="暗記カード">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<style type="text/tailwindcss">
+  @layer components {
+    .btn { @apply rounded-lg border border-slate-700 bg-slate-800 text-slate-100 active:bg-slate-700 font-medium transition-colors; }
+    .seg { @apply px-3 py-1 rounded-md font-medium whitespace-nowrap transition-colors; }
+  }
+</style>
+<style>
+  /* ノッチ・ホームバーに重ならないように（横持ちだと左右に出る） */
+  body {
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
+  }
+</style>
+</head>
+<body class="bg-slate-950 text-slate-100 h-[100dvh] overflow-hidden antialiased select-none">
+<div class="h-full flex flex-col px-3 pt-2 pb-2 gap-2">
+
+  <!-- ツールバー（横持ちで縦の余白を食わないよう1行にまとめる） -->
+  <div class="flex items-center gap-2 text-sm shrink-0">
+    <svg class="shrink-0 text-indigo-400 w-[22px] h-[22px]" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M422.5-103.5Q399-127 399-161h162q0 34-23.5 57.5T480-80q-34 0-57.5-23.5ZM318-223v-60h324v60H318Zm5-121q-66-43-104.5-107.5T180-597q0-122 89-211t211-89q122 0 211 89t89 211q0 81-38 145.5T637-344H323Zm22-60h271q48-32 76-83t28-110q0-99-70.5-169.5T480-837q-99 0-169.5 70.5T240-597q0 59 28 110t77 83Zm135 0Z"/></svg>
+    <select id="cat" class="min-w-0 max-w-[14rem] border border-slate-700 bg-slate-800 text-slate-100 rounded-lg px-2 py-1 text-sm"></select>
+    <div class="ml-auto flex items-center gap-2">
+      <div class="inline-flex rounded-lg border border-slate-700 bg-slate-950 p-0.5">
+        <button id="orderAsIs" class="seg">順番</button>
+        <button id="orderShuffle" class="seg flex items-center gap-1" aria-label="シャッフル"><svg class="w-[18px] h-[18px]" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M576-160v-60h120L522-393l42-43 176 174v-121h60v223H576Zm-374 0-42-43 538-537H576v-60h224v223h-60v-120L202-160Zm193-363L160-757l43-43 235 234-43 43Z"/></svg><span class="portrait:hidden">シャッフル</span></button>
+      </div>
+      <div class="inline-flex rounded-lg border border-slate-700 bg-slate-950 p-0.5">
+        <button id="modeQuiz" class="seg">問題</button>
+        <button id="modeList" class="seg">一覧</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 問題モード：横持ちは左に問題・右に解答、縦持ちは上下 -->
+  <section id="cardView" class="flex-1 min-h-0 grid grid-cols-[auto_1fr_auto] gap-2">
+    <button id="prev" class="btn w-11 text-2xl font-bold text-slate-300" aria-label="前のカード">&lt;</button>
+    <div id="card" class="relative overflow-hidden bg-slate-900 rounded-2xl border border-slate-800 grid grid-rows-2 landscape:grid-rows-1 landscape:grid-cols-2 cursor-pointer">
+      <div class="min-h-0 overflow-y-auto p-4 landscape:p-5 flex flex-col gap-3 landscape:border-r portrait:border-b border-slate-800">
+        <div class="flex items-center justify-between gap-2 text-xs">
+          <span id="cardCat" class="bg-slate-800 border border-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-medium truncate"></span>
+          <span id="cardPos" class="font-mono text-indigo-400 tracking-wider shrink-0"></span>
+        </div>
+        <div id="cardQ" class="text-lg landscape:text-xl font-bold leading-relaxed"></div>
+      </div>
+      <div class="min-h-0 overflow-y-auto p-4 landscape:p-5 flex flex-col gap-3">
+        <div class="text-xs font-mono text-emerald-400 tracking-wider">ANSWER</div>
+        <div id="cardA" class="text-lg landscape:text-xl font-medium leading-relaxed"></div>
+        <div id="cardHint" class="flex-1 flex flex-col items-center justify-center gap-2 text-slate-500 text-base">
+          <svg class="w-[36px] h-[36px]" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M600.5-379.5Q650-429 650-500t-49.5-120.5Q551-670 480-670t-120.5 49.5Q310-571 310-500t49.5 120.5Q409-330 480-330t120.5-49.5Zm-200-41Q368-453 368-500t32.5-79.5Q433-612 480-612t79.5 32.5Q592-547 592-500t-32.5 79.5Q527-388 480-388t-79.5-32.5ZM216-283Q98-366 40-500q58-134 176-217t264-83q146 0 264 83t176 217q-58 134-176 217t-264 83q-146 0-264-83Zm264-217Zm222.5 174.5Q804-391 857-500q-53-109-154.5-174.5T480-740q-121 0-222.5 65.5T102-500q54 109 155.5 174.5T480-260q121 0 222.5-65.5Z"/></svg>
+          タップで解答を表示
+        </div>
+      </div>
+      <div class="absolute inset-x-0 bottom-0 h-1 bg-slate-800" aria-hidden="true">
+        <div id="bar" class="h-full bg-blue-500 transition-all duration-300"></div>
+      </div>
+    </div>
+    <button id="next" class="btn w-11 text-2xl font-bold text-slate-300" aria-label="解答を表示 / 次のカード">&gt;</button>
+  </section>
+
+  <!-- 一覧モード -->
+  <section id="listView" class="hidden flex-1 min-h-0 overflow-y-auto select-text">
+    <div id="list" class="grid grid-cols-1 landscape:grid-cols-2 gap-3 pb-2"></div>
+  </section>
+
+  <p id="msg" class="hidden text-center text-slate-400 text-base"></p>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const CSV_URL = 'my-weakness.csv';
+const KEY_CSV = 'uc-pages-csv';   // オフライン用に最後に取得した CSV
+const KEY_POS = 'uc-pages-pos';   // 前回の続きから再開するための位置
+const esc = s => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+
+// CSV / TSV パーサー（「カテゴリ, 問題, 解答」の3列、または「問題, 解答」の2列に対応）
+function parseCSV(text) {
+  text = text.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+  if (!text) return [];
+  const firstLine = text.split('\n')[0];
+  const sep = firstLine.includes('\t') && !firstLine.includes(',') ? '\t' : ',';
+
+  const rows = [];
+  let row = [], cur = '', inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inQ) {
+      if (ch === '"' && text[i + 1] === '"') { cur += '"'; i++; }
+      else if (ch === '"') inQ = false;
+      else cur += ch;
+    } else {
+      if (ch === '"') inQ = true;
+      else if (ch === sep) { row.push(cur.trim()); cur = ''; }
+      else if (ch === '\n') { row.push(cur.trim()); rows.push(row); row = []; cur = ''; }
+      else cur += ch;
+    }
+  }
+  row.push(cur.trim());
+  if (row.some(x => x)) rows.push(row);
+  if (!rows.length) return [];
+
+  let cCol = -1, qCol = 0, aCol = 1, start = 0;
+  const h = rows[0].map(x => x.toLowerCase());
+  const isHeader = h.some(x => /^(カテゴリ|カテゴリー|category|分野|章)$/.test(x)) ||
+                   h.some(x => /^(問題|question|q|表|おもて)$/.test(x)) ||
+                   h.some(x => /^(解答|回答|答え|answer|a|裏|うら)$/.test(x));
+
+  if (isHeader) {
+    start = 1;
+    const fc = h.findIndex(x => /^(カテゴリ|カテゴリー|category|分野|章)$/.test(x));
+    const fq = h.findIndex(x => /^(問題|question|q|表|おもて)$/.test(x));
+    const fa = h.findIndex(x => /^(解答|回答|答え|answer|a|裏|うら)$/.test(x));
+    if (fc >= 0) cCol = fc;
+    if (fq >= 0) qCol = fq;
+    if (fa >= 0) aCol = fa;
+  } else if (rows[0].length >= 3) {
+    cCol = 0; qCol = 1; aCol = 2;
+  }
+
+  const out = [];
+  for (let i = start; i < rows.length; i++) {
+    const r = rows[i];
+    const cat = (cCol >= 0 ? (r[cCol] || '') : '').trim() || '未分類';
+    const q = (r[qCol] || '').replace(/<br\s*\/?>/gi, '\n').trim();
+    const a = (r[aCol] || '').replace(/<br\s*\/?>/gi, '\n').trim();
+    if (q && a) out.push({ cat, q, a });
+  }
+  return out;
+}
+
+let allCards = [], view = [], idx = 0, flipped = false, listMode = false, shuffled = false, listCards = [];
+
+function buildCats() {
+  const cur = $('cat').value;
+  const cats = [...new Set(allCards.map(c => c.cat))];
+  $('cat').innerHTML = '<option value="">すべてのカテゴリ</option>' + cats.map(c => `<option>${esc(c)}</option>`).join('');
+  $('cat').value = cats.includes(cur) ? cur : '';
+}
+
+function applyFilter() {
+  const c = $('cat').value;
+  view = allCards.filter(x => !c || x.cat === c);
+  if (shuffled) view = shuffleInCats(view);
+  idx = Math.min(idx, Math.max(view.length - 1, 0));
+}
+
+// カテゴリの並びはそのまま、各カテゴリ内の問題だけをシャッフル
+function shuffleInCats(list) {
+  const groups = new Map();
+  list.forEach(x => { if (!groups.has(x.cat)) groups.set(x.cat, []); groups.get(x.cat).push(x); });
+  return [...groups.values()].flatMap(g => {
+    for (let i = g.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [g[i], g[j]] = [g[j], g[i]];
+    }
+    return g;
+  });
+}
+
+const savePos = () => {
+  try { localStorage.setItem(KEY_POS, JSON.stringify({ cat: $('cat').value, shuffled, q: view[idx] && view[idx].q })); } catch (e) {}
+};
+
+function render() {
+  $('cardView').classList.toggle('hidden', listMode);
+  $('listView').classList.toggle('hidden', !listMode);
+  const seg = on => `seg ${on ? 'bg-indigo-600 text-white shadow' : 'text-slate-400'}`;
+  $('modeQuiz').className = seg(!listMode);
+  $('modeList').className = seg(listMode);
+  $('orderAsIs').className = seg(!shuffled);
+  $('orderShuffle').className = seg(shuffled) + ' flex items-center gap-1';
+
+  if (listMode) {
+    // 一覧は資料として見るため、シャッフルに関係なく元の順で表示
+    const c0 = $('cat').value;
+    listCards = allCards.filter(x => !c0 || x.cat === c0);
+    $('list').innerHTML = listCards.map((c, i) => `
+      <div data-i="${i}" class="bg-slate-900 border border-slate-800 rounded-xl p-4 grid gap-2 content-start">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span class="bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-md">${esc(c.cat)}</span>
+          <span class="font-mono">Q${i + 1}</span>
+        </div>
+        <div class="text-base font-bold leading-relaxed">${esc(c.q)}</div>
+        <div class="text-base text-indigo-300 border-t border-slate-800 pt-2 leading-relaxed">${esc(c.a)}</div>
+      </div>`).join('');
+    return;
+  }
+
+  const c = view[idx];
+  $('cardCat').textContent = c ? c.cat : '';
+  $('cardPos').innerHTML = c ? `Q${idx + 1}<span class="text-slate-500"> / ${view.length}</span>` : '';
+  $('cardQ').innerHTML = c ? esc(c.q) : '<span class="text-slate-400">カードがありません</span>';
+  $('cardA').innerHTML = c && flipped ? esc(c.a) : '';
+  $('cardA').classList.toggle('hidden', !flipped);
+  $('cardHint').classList.toggle('hidden', flipped || !c);
+  $('bar').style.width = view.length ? `${(idx + 1) / view.length * 100}%` : '0';
+  savePos();
+}
+
+const go = d => { if (!view.length) return; idx = (idx + d + view.length) % view.length; flipped = false; render(); };
+// > / タップ / 左スワイプは「解答を表示 → 次のカードへ」の2段階。< / 右スワイプは解答を隠した状態で前のカードへ
+const next = () => { if (!view.length) return; if (!flipped) { flipped = true; render(); } else go(1); };
+
+$('prev').onclick = () => go(-1);
+$('next').onclick = next;
+$('cat').onchange = () => { idx = 0; flipped = false; applyFilter(); render(); };
+const setOrder = s => { shuffled = s; idx = 0; flipped = false; applyFilter(); render(); };
+$('orderAsIs').onclick = () => setOrder(false);
+$('orderShuffle').onclick = () => setOrder(true);
+$('modeQuiz').onclick = () => { listMode = false; render(); };
+$('modeList').onclick = () => { listMode = true; render(); };
+$('list').onclick = e => {
+  if (getSelection().toString()) return;
+  const d = e.target.closest('[data-i]');
+  if (d) { idx = Math.max(view.indexOf(listCards[+d.dataset.i]), 0); flipped = false; listMode = false; render(); }
+};
+
+// カードのタップとスワイプ（スワイプ後のタップは無視）
+let touchX = null, touchY = null, swiped = false;
+$('card').addEventListener('touchstart', e => { touchX = e.touches[0].clientX; touchY = e.touches[0].clientY; swiped = false; }, { passive: true });
+$('card').addEventListener('touchend', e => {
+  if (touchX === null) return;
+  const dx = e.changedTouches[0].clientX - touchX, dy = e.changedTouches[0].clientY - touchY;
+  touchX = null;
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) { swiped = true; dx < 0 ? next() : go(-1); }
+});
+$('card').onclick = () => { if (swiped) { swiped = false; return; } next(); };
+
+addEventListener('keydown', e => {
+  if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || listMode) return;
+  if (e.code === 'Space' || e.key === 'ArrowRight') { e.preventDefault(); next(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+});
+
+// 問題はリポジトリの CSV を毎回取りに行き、取れなければ（オフラインなど）前回の CSV を使う
+async function load() {
+  let text = null;
+  try {
+    const r = await fetch(CSV_URL, { cache: 'no-cache' });
+    if (r.ok) { text = await r.text(); try { localStorage.setItem(KEY_CSV, text); } catch (e) {} }
+  } catch (e) {}
+  if (!text) { try { text = localStorage.getItem(KEY_CSV); } catch (e) {} }
+  allCards = text ? parseCSV(text) : [];
+  if (!allCards.length) {
+    $('msg').textContent = '問題を読み込めませんでした。電波のある場所でもう一度開いてください。';
+    $('msg').classList.remove('hidden');
+    $('cardView').classList.add('hidden');
+    return;
+  }
+
+  // 前回の続きから再開
+  let pos = {};
+  try { pos = JSON.parse(localStorage.getItem(KEY_POS)) || {}; } catch (e) {}
+  buildCats();
+  if (pos.cat && [...$('cat').options].some(o => o.value === pos.cat)) $('cat').value = pos.cat;
+  shuffled = !!pos.shuffled;
+  applyFilter();
+  idx = Math.max(view.findIndex(x => x.q === pos.q), 0);
+  render();
+}
+
+load();
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
