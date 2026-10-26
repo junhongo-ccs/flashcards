@@ -8,9 +8,11 @@
 
 ## 2. リポジトリ内の主要ファイル
 - `anki.html`:
-  - サーバー不要・ブラウザで開くだけで動く暗記カードWebアプリ（Tailwind CSS CDN + SheetJS `xlsx.full.min.js` 使用）。
+  - サーバー不要・ブラウザで開くだけで動く暗記カードWebアプリ（SheetJS `xlsx.full.min.js` 使用）。
+  - **Tailwind CSS は CDN を使わず、生成済み CSS を `<style id="tw">` に埋め込んでいる**（拡張機能などで CDN がブロックされる環境でも崩れないように）。元の定義は `tailwind.css`。**anki.html のクラスを追加・変更したら `node build-css.mjs` を実行して再生成すること**（しないと新しいクラスにスタイルが当たらない）。
+  - **アイコンはアイコンフォントを使わず、Material Symbols（Outlined, weight 400）の SVG を直接埋め込んでいる**（`<svg class="inline-block w-[20px] h-[20px] ..." viewBox="0 -960 960 960" fill="currentColor">`、色は `text-*` で指定）。新しいアイコンは `https://cdn.jsdelivr.net/npm/@material-symbols/svg-400@0.48.1/outlined/<名前>.svg` の path をコピーして使う。
   - **常時ダークモード固定**、本文フォントサイズは **16px以上（`text-base` 〜 `text-2xl`）** のシンプルUI。
-  - ヘッダー：タイトル（左に Material Symbols の `lightbulb` アイコン）、`再読込`（File System Access API + IndexedDB）、`QAファイル選択`。
+  - ヘッダー：タイトル（左に `lightbulb` アイコン）、`再読込`（File System Access API + IndexedDB）、`QAファイル選択`。
   - ヘッダー下（背景・線なし）：カテゴリ絞り込み、`QA順 [ 設定のまま | シャッフル ]` スイッチ（シャッフルはカテゴリをまたがずカテゴリ内だけで並べ替え、押すたびにシャッフルし直し。QA一覧は資料用なので常に元の順）、`[ 問題 | QA一覧 ]` セグメントスイッチ。
   - カードの左右に `<` `>` ボタン。`>`（→ キー）は「解答を表示 → 次のカードへ」の2段階、`<`（← キー）は常に解答を隠した状態で前のカードへ。カード内に「解答を表示」ボタン。カード右上に `QUESTION N / 全数`（全数はカテゴリ絞り込み後の問題数）、カード下端に進み具合バー。
   - **不要な機能（復活させないこと）**：「解説」列、ライトモード切替、要復習/覚えた判定、弱点フィルタ、検索バー、学習記録リセット、テンプレートDL、QA貼り付け（Excel に保存されず紛らわしいため削除）。
