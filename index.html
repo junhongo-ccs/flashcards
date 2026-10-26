@@ -44,11 +44,11 @@
 <main class="max-w-4xl mx-auto px-4 pt-6 pb-8">
   <section id="cardView" class="grid gap-6">
     <div class="grid grid-cols-[auto_1fr_auto] items-stretch gap-3">
-      <button id="prev" class="btn !px-0 w-12 md:w-14 text-3xl font-bold text-slate-300" aria-label="前のカード" title="前のカード（← キー）">&lt;</button>
+      <button id="prev" class="btn !px-0 w-12 md:w-14 text-3xl font-bold text-slate-300" aria-label="前のカード" title="前のカード（解答は隠れた状態）（← キー）">&lt;</button>
       <div id="card" class="relative overflow-hidden bg-slate-900 rounded-2xl border border-slate-800 p-8 md:p-12 min-h-[20rem] cursor-pointer select-none grid gap-6 content-start shadow-xl transition-colors hover:border-slate-700"></div>
-      <button id="next" class="btn !px-0 w-12 md:w-14 text-3xl font-bold text-slate-300" aria-label="次のカード" title="次のカード（→ キー）">&gt;</button>
+      <button id="next" class="btn !px-0 w-12 md:w-14 text-3xl font-bold text-slate-300" aria-label="解答を表示 / 次のカード" title="解答を表示 → 次のカード（→ キー）">&gt;</button>
     </div>
-    <p class="text-center text-slate-500 text-sm">スペース / クリック：解答を表示　｜　&lt; &gt; ボタン / ← → キー：前後のカードへ移動</p>
+    <p class="text-center text-slate-500 text-sm">&gt; ボタン / → キー：解答を表示 → 次のカードへ　｜　&lt; ボタン / ← キー：前のカードへ（解答は隠れた状態）</p>
   </section>
 
   <section id="listView" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4"></section>
@@ -276,7 +276,14 @@ function render() {
       <hr class="border-slate-800 my-1">
       <div class="text-xs font-mono text-emerald-400 tracking-wider">ANSWER</div>
       <div class="text-lg md:text-xl font-medium leading-relaxed text-slate-100">${esc(c.a)}</div>
-    ` : '<p class="text-base text-slate-500 text-center pt-10">クリック または スペースキーで解答を表示</p>'}
+    ` : `
+      <div class="flex justify-center pt-8">
+        <button type="button" class="btn inline-flex items-center justify-center gap-2 w-full max-w-xl !px-6 !py-3 text-base">
+          <span class="material-symbols-outlined text-[22px] leading-none" aria-hidden="true">visibility</span>解答を表示
+          <kbd class="ml-1 text-xs font-sans text-slate-400 border border-slate-600 rounded px-1.5 py-0.5">または &gt; ボタン / → キー</kbd>
+        </button>
+      </div>
+    `}
   `;
 }
 
@@ -285,7 +292,9 @@ const flip = () => { flipped = !flipped; render(); };
 
 $('card').onclick = flip;
 $('prev').onclick = () => go(-1);
-$('next').onclick = () => go(1);
+// > は「解答を表示 → 次のカードへ」の2段階。< は常に解答を隠した状態で前のカードへ
+const next = () => { if (!view.length) return; if (!flipped) flip(); else go(1); };
+$('next').onclick = next;
 $('cat').onchange = () => { idx = 0; flipped = false; applyFilter(); render(); };
 const setOrder = s => { shuffled = s; idx = 0; flipped = false; applyFilter(); render(); };
 $('orderAsIs').onclick = () => setOrder(false);
@@ -385,7 +394,7 @@ addEventListener('drop', async e => {
 addEventListener('keydown', e => {
   if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || listMode) return;
   if (e.code === 'Space') { e.preventDefault(); flip(); }
-  else if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
   else if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
 });
 
