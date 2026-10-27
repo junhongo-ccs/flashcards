@@ -6,6 +6,9 @@
 - **必ず日本語で簡潔に応答すること。**
 - ユーザーは色彩検定UC級（色のユニバーサルデザイン級）の受験対策をしており、自分の弱点問題だけをまとめた暗記カードWebアプリと問題データ（Excel / CSV）を育てている。
 
+## 0. Mac 側でやること（Windows 側からの申し送り）
+- [ ] **Git フックを有効にする**（2026-10-27 に追加。Windows 側は設定済み）。`git pull` のあと、リポジトリで一度だけ `git config core.hooksPath .githooks` を実行する（`python3 publish.py` を一度実行しても有効になる）。`git config core.hooksPath` が `.githooks` を返せば完了。これで `anki.html` をコミットすると埋め込み CSS が自動で作り直される（詳細は下の `anki.html` の項）。終わったらこの項目を消すこと。
+
 ## 2. リポジトリ内の主要ファイル
 - `anki.html`（**同僚に渡す版**。ローカルでファイルを開くだけで動く PC 向け）:
   - サーバー不要・ブラウザで開くだけで動く暗記カードWebアプリ（SheetJS `xlsx.full.min.js` 使用）。
