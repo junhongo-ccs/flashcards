@@ -5,6 +5,9 @@ import os, subprocess, sys
 DIR = os.path.dirname(os.path.abspath(__file__))
 git = lambda *args, **kw: subprocess.run(['git', *args], cwd=DIR, **kw)
 
+# anki.html のコミット時に CSS を自動生成するフックを有効にしておく（.githooks/pre-commit）
+git('config', 'core.hooksPath', '.githooks')
+
 subprocess.run([sys.executable, os.path.join(DIR, 'build-csv.py')], check=True)
 git('add', 'my-weakness.xlsx', 'my-weakness.csv', check=True)
 if git('diff', '--cached', '--quiet', 'my-weakness.xlsx', 'my-weakness.csv').returncode == 0:

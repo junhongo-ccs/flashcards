@@ -1,5 +1,5 @@
 // tailwind.css から CSS を生成し、anki.html の <style id="tw"> に埋め込む
-// 使い方: node build-css.mjs （anki.html のクラスを追加・変更したら実行）
+// 使い方: anki.html をコミットすると .githooks/pre-commit が自動で実行する（手動なら node build-css.mjs）
 import { execSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 

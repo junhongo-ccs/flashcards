@@ -1,0 +1,2 @@
+# Git フックはシェルスクリプトなので、Windows でも改行は LF のまま
+.githooks/* text eol=lf

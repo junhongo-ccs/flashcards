@@ -1,0 +1,10 @@
+#!/bin/sh
+# anki.html をコミットするとき、埋め込みの Tailwind CSS を自動で作り直して一緒にコミットする
+# （有効化: git config core.hooksPath .githooks。publish.py を実行しても自動で有効になる）
+git diff --cached --name-only | grep -qx 'anki.html' || exit 0
+
+node build-css.mjs || {
+  echo 'pre-commit: CSS の生成に失敗しました（node と npx が使えて、ネットにつながっているか確認）' >&2
+  exit 1
+}
+git add anki.html
