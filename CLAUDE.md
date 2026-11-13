@@ -1,10 +1,11 @@
-# 色彩検定UC級 暗記カード プロジェクト（Claude Code 引き継ぎルール）
+# 生成AIパスポート 暗記カード プロジェクト（Claude Code 引き継ぎルール）
 
 Windows 環境で Claude Code が作業を引き継ぐためのメモ。Mac 側（Antigravity / Gemini）の引き継ぎ内容は `GEMINI.md` にあり、共通ルールは同じ。
 
 ## 1. 基本方針・コミュニケーション
 - **必ず日本語で簡潔に応答すること。**
-- ユーザーは色彩検定UC級（色のユニバーサルデザイン級）の受験対策をしており、自分の弱点問題だけをまとめた暗記カードWebアプリと問題データ（Excel / CSV）を育てている。
+- ユーザーは**生成AIパスポート（2027年2月試験・新シラバス）**の受験対策をしており、自分の弱点問題だけをまとめた暗記カードWebアプリと問題データ（Excel / CSV）を育てている。
+- 以前は色彩検定UC級の対策に使っていた（2026年11月に受験済み）。UC級のデータは上書きして残していない。同僚も全員受験済みなので、移行の案内などは要らない。
 - ユーザーは Mac と Windows の両方で作業する。弱点データ（`my-weakness.xlsx`）は Mac から持ってきてこのフォルダ直下に置く。
 
 ## 2. リポジトリ内の主要ファイル
@@ -30,7 +31,14 @@ Windows 環境で Claude Code が作業を引き継ぐためのメモ。Mac 側�
   - **`my-weakness.csv` も xlsx と一緒にコミットして管理する**（同僚が Excel なしでも使え、GitHub 上で差分も読める）。CSV は自動では更新されないので、**xlsx を編集したら毎回 `python3 publish.py` を実行すること**（CSV 作り直し → xlsx と CSV だけコミット → push まで行い、GitHub Pages 版に反映される。CSV だけ作りたいときは `python3 build-csv.py`）（UTF-8・BOM なし・LF 改行）。
   - Mac 側でも編集されるため、編集前に最新版がこのフォルダにあるかユーザーに確認すること。
 - **配布用サンプル Excel（`sample-*.xlsx` など）は作らない。** `my-weakness.xlsx` がその役割を兼ねる。
-- `anki.html` の内蔵サンプルデータ（ファイル未読込時の初期表示用）の中身は、勝手に決めずユーザーと相談すること。
+- `anki.html` の内蔵サンプルデータ（ファイル未読込時の初期表示用）の中身は、勝手に決めずユーザーと相談すること（2026-11 時点は第1章の最初の7問）。
+
+## 2.5 問題データの作り方（生成AIパスポート）
+- **カテゴリは公式シラバス**（`https://guga.or.jp/assets/syllabus.pdf`、2027年2月試験より適用）**の5つの大項目名をそのまま使う**：`第1章 AIの基礎と歴史` / `第2章 生成AI` / `第3章 AIエージェント` / `第4章 生成AIのリスク予防・AI倫理・ガバナンス` / `第5章 生成AIの実践と活用事例`。
+- 行は章順・シラバスの中項目順に並べる（QA一覧は元の順で表示されるため）。
+- 弱点カード方式：章ごとに練習問題を解き、**間違えた問題と勘で当たった問題だけ**をカードにする。問題は「説明 → 用語」の向きを基本に、1枚に1つのことだけ。
+- **リポジトリは公開なので、テキストの文章はそのまま写さず、短く言い換える。**
+- 手元には旧シラバス版のテキストもある。旧版から作るカードは、新シラバスの範囲・用語に合っているか確かめる。モデル名・法律など変わりやすい情報は、解答に時点を書く。
 - `GEMINI.md`: Mac 側 AI 用の引き継ぎメモ。共通ルールを変えたときは両方を更新すること。
 
 ## 3. GridCraft（MCP）での Excel 編集手順
@@ -41,7 +49,7 @@ Windows 環境で Claude Code が作業を引き継ぐためのメモ。Mac 側�
 Start-Process "C:\Program Files\GridCraft\gridcraft.exe" -ArgumentList '--control','7979','"C:\github\flashcard\my-weakness.xlsx"'
 ```
 ```bash
-"/c/Program Files/GridCraft/gridcraft-cli.exe" send 7979 range.setValues '{"range":"C15","values":[["d (dull)"]]}'
+"/c/Program Files/GridCraft/gridcraft-cli.exe" send 7979 range.setValues '{"range":"C2","values":[["回帰"]]}'
 "/c/Program Files/GridCraft/gridcraft-cli.exe" send 7979 file.save '{}'
 ```
 
